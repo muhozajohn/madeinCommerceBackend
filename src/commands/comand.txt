@@ -1,0 +1,7 @@
+npx sequelize-cli model:generate --name Category --attributes categoryName:string,categoryDescrptiom:string 
+& npx sequelize-cli model:generate --name Vendors --attributes firstName:string,lastName:string,email:string,phone:string,address:string,profile:string,shopName:string,roleId:integer
+& npx sequelize-cli model:generate --name Customers --attributes firstName:string,lastName:string,email:string,profile:string,roleId:integer,password:string
+& npx sequelize-cli model:generate --name Products --attributes productName:string,productImage:string,productCategory:array:string,productPrice:integer,productDiscount:integer,productDescription:string,productTags:string,vendorId:integer
+& npx sequelize-cli model:generate --name Roles --attributes roleName:string
+& npx sequelize-cli model:generate --name Cart --attributes productId:string,customerId:string,numberOfItems:integer
+& npx sequelize-cli model:generate --name wishlist --attributes productId:string,customerId:string,numberOfItems:integer

@@ -1,0 +1,56 @@
+{
+  "name": "madein",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "npm run build && node ./build/src/index.js",
+    "start:dev": "nodemon --exec babel-node ./src/index.js",
+    "clean": "rm -rf build && mkdir build",
+    "build-babel": "babel -d ./build/src/ ./src/ -s",
+    "build": "npm run clean && npm run build-babel",
+    "migration": "sequelize db:migrate",
+    "migration:undo": "sequelize db:migrate:undo:all",
+    "migration:reset": "npm run migration:undo && npm run migration",
+    "seed": "npm run migration:undo && npm run migration && npx sequelize db:seed:undo:all && npx sequelize db:seed:all"
+  },
+  "author": "zeus",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/cli": "^7.21.0",
+    "@babel/core": "^7.21.0",
+    "bcrypt": "^5.1.0",
+    "body-parser": "^1.20.2",
+    "cloudinary": "^1.35.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.1",
+    "nodemon": "^2.0.21",
+    "path": "^0.12.7",
+    "pg": "^8.9.0",
+    "sequelize": "^6.29.0",
+    "sequelize-cli": "^6.6.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.2"
+  },
+  "devDependencies": {
+    "@babel/node": "^7.20.7",
+    "@babel/plugin-transform-runtime": "^7.21.0",
+    "@babel/polyfill": "^7.12.1",
+    "@babel/preset-env": "^7.20.2",
+    "@babel/runtime": "^7.21.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Klab-Rwanda/handcraft-e-commerce-bn.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Klab-Rwanda/handcraft-e-commerce-bn/issues"
+  },
+  "homepage": "https://github.com/Klab-Rwanda/handcraft-e-commerce-bn#readme",
+  "description": ""
+}
