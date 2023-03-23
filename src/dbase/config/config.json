@@ -1,9 +1,10 @@
 {
   "development": {
     "username": "postgres",
-    "password": "JohnTheSaint",
-    "database": "madeIn",
-    "host": "127.0.0.1",
+    "password": "AilmtbrnDnH6ChJRbCMZ",
+    "database": "railway",
+    "port":"5503",
+    "host": "containers-us-west-110.railway.app",
     "dialect": "postgres"
   },
   "test": {
