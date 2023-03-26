@@ -2,7 +2,8 @@ import { Products } from "../dbase/models";
 import { uploadToCloud } from "../helper/cloud";
 
 export const createProduct = async (req, res) => {
-  const Vendor = req.Vendors;
+  const Vendor = req.VendorReq;
+  console.log(req.VendorReq);
   let {
     productName,
     productImage,

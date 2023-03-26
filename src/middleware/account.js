@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import { VendorReq ,Users} from "../dbase/models";
+import { Users } from "../dbase/models";
 
-export const Authorization = async (req, res, next) => {
+export const AccountAutho = async (req, res, next) => {
   let token;
 
   try {
@@ -20,21 +20,19 @@ export const Authorization = async (req, res, next) => {
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const loggedUser = await Users.findByPk(decoded.id);
-    // console.log(decoded);
-    // console.log(loggedUser);
     if (!loggedUser) {
       return res.status(401).json({
         status: "failed",
         message: "Token has expired please login again",
       });
     }
-    if (loggedUser.roleId !== 2) {
+    if (loggedUser.roleId !== 3) {
       return res.status(403).json({
         status: "failed",
-        messase: "Only Vendors can Post Products",
+        messase: "Only Registered customer allowed to requesr to be  Vendor",
       });
     } else {
-      req.VendorReq = loggedUser;
+      req.Users = loggedUser;
       next();
     }
   } catch (error) {

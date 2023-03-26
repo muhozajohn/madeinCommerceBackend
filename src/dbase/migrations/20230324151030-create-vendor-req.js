@@ -2,35 +2,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Customers", {
+    await queryInterface.createTable("VendorReqs", {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      firstName: {
+      shopName: {
         type: Sequelize.STRING,
       },
-      lastName: {
+      shopAddress: {
         type: Sequelize.STRING,
       },
-      email: {
-        type: Sequelize.STRING,
-      },
-      isVerified: {
-        type: Sequelize.BOOLEAN,
-      },
-      emailToken: {
-        type: Sequelize.STRING,
-      },
-      profile: {
-        type: Sequelize.STRING,
+      vendorData: {
+        type: Sequelize.JSON,
       },
       roleId: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
       },
-      password: {
+      userId: {
         type: Sequelize.STRING,
       },
       createdAt: {
@@ -44,6 +35,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Customers");
+    await queryInterface.dropTable("VendorReqs");
   },
 };

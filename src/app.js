@@ -9,6 +9,8 @@ import productRoutes from "./routes/productRoutes";
 import categoryRoutes from "./routes/categoryRoutes";
 import VendorsRoutes from "./routes/vendorRoutses";
 import cartRouter from "./routes/CartRoutes";
+import vendorRoutes from "./routes/vendorRoutes";
+import adminRoutes from "./routes/adminRoutes";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 
@@ -62,6 +64,8 @@ app.use("/api/zeus/products", productRoutes);
 app.use("/api/zeus/category", categoryRoutes);
 app.use("/api/zeus/vendor", VendorsRoutes);
 app.use("/api/zeus/cart", cartRouter);
+app.use("/api/zeus/vendorReq", vendorRoutes);
+app.use("/api/zeus/admin", adminRoutes);
 
 app.get("/", (req, res) => {
   res.status(200).json({

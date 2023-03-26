@@ -1,11 +1,13 @@
 import Jwt from "jsonwebtoken";
 import bcrypt, { genSalt, hash } from "bcrypt";
-import { Customers } from "../dbase/models";
+// import { Customers } from "../dbase/models";
+import { Users } from "../dbase/models";
 import { uploadToCloud } from "../helper/cloud";
 import nodemailer from "nodemailer";
+import * as crypto from "crypto";
 
 export const signUp = async (req, res) => {
-  let { firstName, lastName, email, password } = req.body;
+  let { firstName, lastName, email, password, address } = req.body;
   try {
     let emailSubject;
 
@@ -26,12 +28,14 @@ export const signUp = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
 
-    const user = await Customers.create({
+    const user = await Users.create({
       firstName,
       lastName,
       email,
+      address,
       profile: result?.secure_url || "profile.jpg",
       password: hashedPass,
+      emailToken: crypto.randomBytes(64).toString("hex"),
     });
     const token = await Jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: process.env.EXPIRE_DATE,
@@ -41,7 +45,7 @@ export const signUp = async (req, res) => {
     emailBody = `<p>Dear ${user.firstName},</p>
                    <p>Thanks for registering on our site.</p>
                    <p>Please verify your email to continue...</p>
-                    <a href="http://${req.headers.host}/user/verify-email?token=${user.emailToken}">Verify Email</a>
+                    <a href="http://${req.headers.host}/api/zeus/users/verifyEmail/${user.id}">Verify Email</a>
                    `;
     const mailOptions = {
       from: process.env.EMAIL_VALUE,
@@ -76,12 +80,16 @@ export const signUp = async (req, res) => {
 // login
 export const login = async (req, res) => {
   try {
-    const user = await Customers.findOne({ where: { email: req.body.email } });
-
+    const user = await Users.findOne({ where: { email: req.body.email } });
+    // const customer = await Customers.findOne({ where: { email } });
     if (!user) {
       return res.status(404).json({
         message: "User not found",
       });
+    }
+    if (user.isVerified !== true) {
+      // Customer not verified
+      return res.status(401).send({ message: "Account not verified" });
     }
     const isMatch = await bcrypt.compare(req.body.password, user.password);
     if (!isMatch) {
@@ -89,12 +97,12 @@ export const login = async (req, res) => {
         message: "Password is incorrect",
       });
     }
+
     const token = await Jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
       expiresIn: process.env.EXPIRE_DATE,
     });
     res.status(200).json({
       message: "User logged in successfully",
-      data: user,
       token: token,
     });
   } catch (error) {
@@ -109,7 +117,7 @@ export const login = async (req, res) => {
 // all Users
 export const getAllUsers = async (req, res) => {
   try {
-    const user = await Customers.findAll();
+    const user = await Users.findAll();
     return res.status(200).json({
       statusbar: "success",
       message: "Users fetched successfully",
@@ -128,7 +136,7 @@ export const getAllUsers = async (req, res) => {
 export const getById = async (req, res) => {
   try {
     const { id } = req.params;
-    const getId = await Customers.findByPk(id);
+    const getId = await Users.findByPk(id);
 
     if (!getId) {
       return res.status(404).json({
@@ -156,7 +164,7 @@ export const getById = async (req, res) => {
 export const upDate = async (req, res) => {
   try {
     const { id } = req.params;
-    const getid = await Customers.findByPk(id);
+    const getid = await Users.findByPk(id);
 
     if (!getid) {
       return res.status(404).json({
@@ -165,17 +173,18 @@ export const upDate = async (req, res) => {
       });
     }
 
-    let { firstName, lastName, email, password } = req.body;
+    let { firstName, lastName, email, password, address } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
     const result = await uploadToCloud(req.file, res);
 
-    const userUpdate = await Customers.update(
+    const userUpdate = await Users.update(
       {
         firstName,
         lastName,
         email,
         profile: result?.secure_url || "profile.jpg",
+        address,
         password: hashedPass,
       },
       { where: { id: id } },
@@ -202,7 +211,7 @@ export const delUser = async (req, res) => {
   {
     try {
       const { id } = req.params;
-      const getid = await Customers.findByPk(id);
+      const getid = await Users.findByPk(id);
 
       if (!getid) {
         return res.status(404).json({
@@ -211,10 +220,7 @@ export const delUser = async (req, res) => {
         });
       }
 
-      const deleUsers = await Customers.destroy(
-        { where: { id } },
-        { new: true }
-      );
+      const deleUsers = await Users.destroy({ where: { id } }, { new: true });
       // console.log(deleUsers);
       return res.status(200).json({
         statusbar: "success",
@@ -228,5 +234,63 @@ export const delUser = async (req, res) => {
         error: error.message + "Check your internet And Query",
       });
     }
+  }
+};
+
+// ================verify email===========================
+
+export const verifyEmail = async (req, res) => {
+  try {
+    // const token = req.params.token;
+    const { id } = req.params;
+    console.log("tokrn------", id);
+    const user = await Users.findByPk(id);
+    console.log("user------", user);
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid verification token",
+      });
+    }
+    await user.update({ isVerified: true });
+
+    const transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      auth: {
+        user: process.env.EMAIL_VALUE,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    let emailSubject = "Email verified Successfully";
+    let emailBody = `<p>Dear ${user.firstName} ${user.lastName}</p>
+             <p>Thanks for registering on our site.</p>
+             <p>Your email has been successfully verified.</p>`;
+    const mailOptions = {
+      from: process.env.EMAIL_VALUE,
+      to: user.email,
+      subject: emailSubject,
+      html: emailBody,
+    };
+    //sending email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error(error);
+      } else {
+        console.log("Email sent: " + info.response);
+      }
+    });
+
+    return res.status(200).json({
+      message: "Email verified ,Now you can log in with your email",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Unexpected error",
+    });
   }
 };
