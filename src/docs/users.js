@@ -94,48 +94,59 @@
 
 // Update a user
 
+// =============================update users=========================
 /**
  * @swagger
- * /api/zeus/users/upDate/{id}:
+ *
+ * /api/zeus/users/update/{id}:
  *   put:
- *     tags:
- *       - Users
- *     description: Update User by User Id
- *     security:
- *       - bearerAuth: []
+ *     summary: Update an event by ID
+ *     tags: [Users]
+ *     description: Update an existing event with new data.
  *     parameters:
- *       - name: id
- *         in: path
- *         description: ID of the user to update
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
  *         required: true
- *         type: string
- *       - name: firstName
- *         in: formData
- *         description: The firstName of the user
- *         required: true
- *         type: string
- *       - name: lastName
- *         in: formData
- *         description: The lastName of the user
- *         required: true
- *         type: string
- *       - name: email
- *         in: formData
- *         description: The email of the user
- *         required: true
- *         type: string
- *       - name: password
- *         in: formData
- *         description: The password of the user
- *         required: true
- *         type: string
+ *         description: The ID of the event to update.
+ *     requestBody:
+ *       required: true
+ *       description: The updated event data, including an image file.
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               firstName:
+ *                 type: string
+ *                 description: The updated firstName of the User.
+ *               lastName:
+ *                 type: string
+ *                 description: The updated lastName of the user.
+ *               email:
+ *                 type: string
+ *                 description: The updated email of the User.
+ *               password:
+ *                 type: string
+ *                 password: The updated lastName of the user.
+ *               profile:
+ *                 type: string
+ *                 format: binary
+ *                 description: An updated image file for the user.
  *     responses:
  *       200:
- *         description: Update success
- *       401:
- *         description: Unauthorized
- *       404:
- *         description: Post not found
+ *         description: OK. Returns the updated User.
+ *       500:
+ *         description: Internal Server Error. Something went wrong on the server.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: A message describing the error.
  */
 
 // delte user
