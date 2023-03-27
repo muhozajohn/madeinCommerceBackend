@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { Customers } from "../dbase/models";
+import { Users } from "../dbase/models";
 
 export const Authorization = async (req, res, next) => {
   let token;
@@ -19,7 +19,7 @@ export const Authorization = async (req, res, next) => {
       });
     }
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const loggedUser = await Customers.findByPk(decoded.id);
+    const loggedUser = await Users.findByPk(decoded.id);
     if (!loggedUser) {
       return res.status(401).json({
         status: "failed",
@@ -29,10 +29,10 @@ export const Authorization = async (req, res, next) => {
     if (loggedUser.roleId !== 3) {
       return res.status(403).json({
         status: "failed",
-        messase: "Only Customer can do this operation",
+        messase: "Only Users can do this operation",
       });
     } else {
-      req.Customers = loggedUser;
+      req.Users = loggedUser;
       next();
     }
   } catch (error) {

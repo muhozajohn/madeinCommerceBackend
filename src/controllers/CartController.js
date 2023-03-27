@@ -19,7 +19,7 @@ export const getCart = async (req, res) => {
 
 // AddToCart
 export const addToCart = async (req, res) => {
-  const userID = req.Customers;
+  const userID = req.Users;
   const { id } = req.params;
   try {
     const product = await Products.findByPk(id);
@@ -31,11 +31,11 @@ export const addToCart = async (req, res) => {
     }
     let { productId, customerId, numberOfItems } = req.body;
     const cart = await Cart.create({
-      productId: product,
+      productId: product.id,
       customerId: userID.id,
       numberOfItems,
     });
-    Cart.push(cart);
+    // Cart.push(cart);
     return res.status(200).json({
       statusbar: "success",
       message: "Product added to cart successfully",

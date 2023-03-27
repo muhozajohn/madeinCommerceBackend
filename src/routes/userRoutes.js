@@ -9,6 +9,7 @@ import {
   verifyEmail,
 } from "../controllers/userController";
 import fileUpload from "../helper/multer";
+// import {saveUser} from "../middleware/existingUser"
 const userRoutes = express.Router();
 
 userRoutes.post("/signUp", fileUpload.single("profile"), signUp);

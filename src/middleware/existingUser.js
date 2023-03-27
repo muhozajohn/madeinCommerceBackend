@@ -1,13 +1,11 @@
-//importing modules
-import express from "express";
-import { Customers } from "../dbase/models";
+import { Users } from "../dbase/models";
 
 //Function to check if username or email already exist in the database
 //this is to avoid having two users with the same username and email
 export const saveUser = async (req, res, next) => {
   //search the database to see if user exist
   try {
-    const username = await Customers.findOne({
+    const username = await Users.findOne({
       where: {
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -19,7 +17,7 @@ export const saveUser = async (req, res, next) => {
     }
 
     //checking if email already exist
-    const emailcheck = await Customers.findOne({
+    const emailcheck = await Users.findOne({
       where: {
         email: req.body.email,
       },
@@ -27,7 +25,10 @@ export const saveUser = async (req, res, next) => {
 
     //if email exist in the database respond with a status of 409
     if (emailcheck) {
-      return res.json(409).send("Authentication failed");
+      return res.json(409).json({
+        statusBar: "failed",
+        messAGE: "Authentication failed",
+      });
     }
 
     next();

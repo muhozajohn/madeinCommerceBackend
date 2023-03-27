@@ -43,6 +43,11 @@ const options = {
         bearerAuth: [],
       },
     ],
+    servers: [
+      {
+        url: "https://madeinapi.onrender.com",
+      },
+    ],
   },
   apis: ["./src/docs/*.js"],
 };

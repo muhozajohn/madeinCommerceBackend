@@ -6,7 +6,7 @@ const cartRouter = express.Router();
 
 cartRouter.get("/read", getCart);
 cartRouter.post(
-  "/addToCart",
+  "/addToCart/productId/:id",
   fileUpload.single("addToCart"),
   Authorization,
   addToCart
