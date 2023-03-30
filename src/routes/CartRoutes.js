@@ -1,5 +1,9 @@
 import express from "express";
-import { getCart, addToCart } from "../controllers/CartController";
+import {
+  getCart,
+  addToCart,
+  removeFromCart,
+} from "../controllers/CartController";
 import fileUpload from "../helper/multer";
 import { Authorization } from "../middleware/customerAutho";
 const cartRouter = express.Router();
@@ -11,5 +15,7 @@ cartRouter.post(
   Authorization,
   addToCart
 );
+
+cartRouter.delete("/removeProduct/:id", Authorization, removeFromCart);
 
 export default cartRouter;

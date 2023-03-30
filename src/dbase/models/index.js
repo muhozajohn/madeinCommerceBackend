@@ -14,7 +14,7 @@ if (config.url) {
   try {
     sequelize = new Sequelize(config.url, { logging: false });
     sequelize.authenticate();
-    console.log("Connection has been established successfully.");
+    console.log("DB connected.");
   } catch (error) {
     console.error("Unable to connect to the database:", error);
   }

@@ -6,6 +6,7 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 import userRoutes from "./routes/userRoutes";
 import productRoutes from "./routes/productRoutes";
+import paymentRoute from "./routes/payment";
 import categoryRoutes from "./routes/categoryRoutes";
 import VendorsRoutes from "./routes/vendorRoutses";
 import cartRouter from "./routes/CartRoutes";
@@ -63,7 +64,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 // Routes
-
+app.use("/api/zeus/payment", paymentRoute);
 app.use("/api/zeus/users", userRoutes);
 app.use("/api/zeus/products", productRoutes);
 app.use("/api/zeus/category", categoryRoutes);

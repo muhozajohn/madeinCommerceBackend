@@ -23,9 +23,14 @@ export const signUp = async (req, res) => {
         rejectUnauthorized: false,
       },
     });
+   let result;
 
-    const result = await uploadToCloud(req.file, res);
-    const salt = await bcrypt.genSalt(10);
+    if(req.file){
+    result = await uploadToCloud(req.file, res);
+    }
+    
+  
+  const salt = await bcrypt.genSalt(10);
     const hashedPass = await bcrypt.hash(password, salt);
 
     const user = await Users.create({
@@ -33,7 +38,9 @@ export const signUp = async (req, res) => {
       lastName,
       email,
       address,
-      profile: result?.secure_url || "profile.jpg",
+      profile:
+        result?.secure_url ||
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png",
       password: hashedPass,
       emailToken: crypto.randomBytes(64).toString("hex"),
     });
@@ -87,10 +94,10 @@ export const login = async (req, res) => {
         message: "User not found",
       });
     }
-    if (user.isVerified !== true) {
-      // Customer not verified
-      return res.status(401).send({ message: "Account not verified" });
-    }
+    // if (user.isVerified !== true) {
+    //   // Customer not verified
+    //   return res.status(401).send({ message: "Account not verified" });
+    // }
     const isMatch = await bcrypt.compare(req.body.password, user.password);
     if (!isMatch) {
       return res.status(404).json({
@@ -208,7 +215,7 @@ export const upDate = async (req, res) => {
 // Delete user
 
 export const delUser = async (req, res) => {
-  {
+
     try {
       const { id } = req.params;
       const getid = await Users.findByPk(id);
@@ -234,7 +241,6 @@ export const delUser = async (req, res) => {
         error: error.message + "Check your internet And Query",
       });
     }
-  }
 };
 
 // ================verify email===========================

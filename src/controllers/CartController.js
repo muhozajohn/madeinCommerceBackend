@@ -49,3 +49,31 @@ export const addToCart = async (req, res) => {
     });
   }
 };
+
+
+export  const removeFromCart  =async(req,res) =>{
+    try {
+      const { id } = req.params;
+      const getid = await Cart.findByPk(id);
+
+      if (!getid) {
+        return res.status(404).json({
+          statusbar: "Failed",
+          message: "Product not Found in cart",
+        });
+      }
+
+      const removeInCart = await Cart.destroy({ where: { id } }, { new: true });
+      return res.status(204).json({
+        statusbar: "success",
+        message: "Product remove successfully",
+      });
+      
+    } catch (error) {
+      return res.status(500).json({
+        statusbar: "Failed",
+        message: "Failed to Delete  remove from cart",
+        error: error.message + "Check your internet And Query",
+      });
+    }
+}

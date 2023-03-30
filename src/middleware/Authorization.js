@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { Users } from "../dbase/models";
 
-export const AccountAutho = async (req, res, next) => {
+export const LoggedUser = async (req, res, next) => {
   let token;
 
   try {
@@ -11,6 +11,7 @@ export const AccountAutho = async (req, res, next) => {
     ) {
       token = req.headers.authorization.split(" ")[1];
     }
+
     if (!token) {
       return res.status(401).json({
         status: "failed",
